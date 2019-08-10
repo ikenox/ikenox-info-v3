@@ -1,5 +1,10 @@
 # ikenox-info
 
+## requirements
+
+- Elm
+- elm-format
+
 ## output
 
 ```sh
