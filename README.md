@@ -3,7 +3,6 @@
 ## requirements
 
 - Elm
-- elm-format
 
 ## output
 

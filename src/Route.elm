@@ -13,9 +13,11 @@ type Route
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map Home (s "")
-        , map AboutMe (s "aboutme")
+        [ map AboutMe (s "aboutme")
         , map Blog (s "blog" </> string)
+
+        -- FIXME
+        , map Home (s "src" </> s "Main.elm")
         ]
 
 
