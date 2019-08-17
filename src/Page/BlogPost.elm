@@ -2,7 +2,8 @@ module Page.BlogPost exposing (Model, view)
 
 import Browser
 import Component.Layout exposing (layout)
-import Html exposing (text)
+import Html exposing (div)
+import Markdown
 
 
 type alias Model =
@@ -13,4 +14,19 @@ type alias Model =
 
 view : Model -> Browser.Document msg
 view model =
-    { title = model.title, body = layout [ text model.postId ] }
+    { title = model.title
+    , body =
+        layout
+            [ div
+                []
+                [ Markdown.toHtml
+                    []
+                    """
+# foo
+## bar
+- fizz
+- bazz
+"""
+                ]
+            ]
+    }

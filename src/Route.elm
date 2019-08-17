@@ -1,7 +1,7 @@
 module Route exposing (Route(..), fromUrl)
 
 import Url exposing (Url)
-import Url.Parser as Parser exposing ((</>), Parser, map, oneOf, s, string)
+import Url.Parser as Parser exposing ((</>), Parser, map, oneOf, s, string, top)
 
 
 type Route
@@ -15,9 +15,7 @@ routeParser =
     oneOf
         [ map AboutMe (s "aboutme")
         , map Blog (s "blog" </> string)
-
-        -- FIXME
-        , map Home (s "src" </> s "Main.elm")
+        , map Home top
         ]
 
 
