@@ -15,6 +15,7 @@ routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
         [ map AboutMe (s "aboutme")
+        , map AboutMe (s "about")
         , map Blog (s "blog" </> string)
         , map Home top
         ]

@@ -11,4 +11,4 @@ type alias Model =
 
 view : Model -> Browser.Document msg
 view model =
-    { title = "Not found", body = layout [ text "404 not found" ] }
+    { title = "Not Found", body = layout [ text "404 Not Found" ] }

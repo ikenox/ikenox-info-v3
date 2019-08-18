@@ -1,17 +1,46 @@
-module Page.AboutMe exposing (Model, view)
+module Page.AboutMe exposing (Model, Msg, init, update, view)
 
+import Adapter.Repository exposing (findByPath)
 import Browser
 import Component.Layout exposing (layout)
-import Html exposing (text)
+import Component.Markdown exposing (markdown)
+import Const exposing (author)
+import Debug exposing (log, toString)
+import Http
 
 
 type alias Model =
-    {}
+    { md : String }
+
+
+type Msg
+    = GotProfile (Result Http.Error String)
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( { md = "" }
+    , findByPath "/static/documents/about.md" GotProfile
+    )
 
 
 view : Model -> Browser.Document msg
 view model =
-    { title = "about me"
+    { title = author
     , body =
-        layout [ text "naoto ikeno" ]
+        layout [ markdown model.md ]
     }
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GotProfile (Ok body) ->
+            ( { model | md = body }, Cmd.none )
+
+        GotProfile (Err err) ->
+            let
+                _ =
+                    toString err |> log
+            in
+            ( model, Cmd.none )

@@ -1,4 +1,4 @@
-module Const exposing (siteName)
+module Const exposing (author, siteName)
 
 import Maybe exposing (Maybe)
 

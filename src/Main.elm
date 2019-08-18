@@ -2,6 +2,7 @@ module Main exposing (Model, Msg(..), main, subscriptions, update, view)
 
 import Browser
 import Browser.Navigation as Nav
+import Const exposing (siteName)
 import Page.AboutMe as AboutMe
 import Page.BlogPost as BlogPost
 import Page.Home as Home
@@ -37,7 +38,8 @@ type alias Model =
 
 
 type Page
-    = Home Home.Model
+    = None
+    | Home Home.Model
     | BlogPost BlogPost.Model
     | NotFound NotFound.Model
     | AboutMe AboutMe.Model
@@ -45,7 +47,7 @@ type Page
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    update (UrlChanged url) { page = Home {}, key = key }
+    update (UrlChanged url) { page = None, key = key }
 
 
 
@@ -56,6 +58,7 @@ type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | GotBlogPostMsg BlogPost.Msg
+    | GotAboutMeMsg AboutMe.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,7 +89,11 @@ update msg model =
                     ( { model | page = BlogPost m }, Cmd.map GotBlogPostMsg c )
 
                 Just Route.AboutMe ->
-                    ( { model | page = AboutMe {} }, Cmd.none )
+                    let
+                        ( m, c ) =
+                            AboutMe.init
+                    in
+                    ( { model | page = AboutMe m }, Cmd.map GotAboutMeMsg c )
 
                 Nothing ->
                     ( { model | page = NotFound {} }, Cmd.none )
@@ -99,6 +106,18 @@ update msg model =
                             BlogPost.update subMsg subModel
                     in
                     ( { model | page = BlogPost sm }, Cmd.map GotBlogPostMsg sc )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        GotAboutMeMsg subMsg ->
+            case page of
+                AboutMe subModel ->
+                    let
+                        ( sm, sc ) =
+                            AboutMe.update subMsg subModel
+                    in
+                    ( { model | page = AboutMe sm }, Cmd.map GotAboutMeMsg sc )
 
                 _ ->
                     ( model, Cmd.none )
@@ -135,3 +154,8 @@ view model =
 
         AboutMe p ->
             AboutMe.view p
+
+        None ->
+            { title = siteName
+            , body = []
+            }

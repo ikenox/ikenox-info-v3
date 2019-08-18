@@ -2,6 +2,7 @@ module Page.Home exposing (Model, view)
 
 import Browser
 import Component.Layout exposing (layout)
+import Const exposing (siteName)
 import Html exposing (Html, a, b, li, text, ul)
 import Html.Attributes exposing (href)
 
@@ -12,7 +13,7 @@ type alias Model =
 
 view : Model -> Browser.Document msg
 view model =
-    { title = "home"
+    { title = siteName
     , body =
         layout
             [ ul []
