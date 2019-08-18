@@ -1,12 +1,13 @@
 module Route exposing (Route(..), fromUrl)
 
+import Domain.BlogPost exposing (PostId)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser, map, oneOf, s, string, top)
 
 
 type Route
     = Home
-    | Blog String
+    | Blog PostId
     | AboutMe
 
 

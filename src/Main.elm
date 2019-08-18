@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), main, subscriptions, update, view, viewPage)
+module Main exposing (Model, Msg(..), main, subscriptions, update, view)
 
 import Browser
 import Browser.Navigation as Nav
@@ -32,7 +32,6 @@ main =
 
 type alias Model =
     { key : Nav.Key
-    , url : Url.Url
     , page : Page
     }
 
@@ -46,27 +45,7 @@ type Page
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    viewPage url key
-
-
-viewPage : Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-viewPage url key =
-    let
-        model =
-            case fromUrl url of
-                Just Route.Home ->
-                    Model key url <| Home Home.Model
-
-                Just (Route.Blog postId) ->
-                    Model key url <| BlogPost <| BlogPost.Model "foo" postId
-
-                Just Route.AboutMe ->
-                    Model key url <| AboutMe AboutMe.Model
-
-                Nothing ->
-                    Model key url <| NotFound NotFound.Model
-    in
-    ( model, Cmd.none )
+    update (UrlChanged url) { page = Home {}, key = key }
 
 
 
@@ -76,21 +55,53 @@ viewPage url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
+    | GotBlogPostMsg BlogPost.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        { key, page } =
+            model
+    in
     case msg of
         LinkClicked urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
-                    ( model, Url.toString url |> Nav.pushUrl model.key )
+                    ( model, Url.toString url |> Nav.pushUrl key )
 
                 Browser.External href ->
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            viewPage url model.key
+            case fromUrl url of
+                Just Route.Home ->
+                    ( { model | page = Home {} }, Cmd.none )
+
+                Just (Route.Blog postId) ->
+                    let
+                        ( m, c ) =
+                            BlogPost.init postId
+                    in
+                    ( { model | page = BlogPost m }, Cmd.map GotBlogPostMsg c )
+
+                Just Route.AboutMe ->
+                    ( { model | page = AboutMe {} }, Cmd.none )
+
+                Nothing ->
+                    ( { model | page = NotFound {} }, Cmd.none )
+
+        GotBlogPostMsg subMsg ->
+            case page of
+                BlogPost subModel ->
+                    let
+                        ( sm, sc ) =
+                            BlogPost.update subMsg subModel
+                    in
+                    ( { model | page = BlogPost sm }, Cmd.map GotBlogPostMsg sc )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 
@@ -108,7 +119,11 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    case model.page of
+    let
+        { page } =
+            model
+    in
+    case page of
         Home p ->
             Home.view p
 

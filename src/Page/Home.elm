@@ -15,12 +15,11 @@ view model =
     { title = "home"
     , body =
         layout
-            [ text ">> The current URL is: "
-            , ul []
+            [ ul []
                 [ viewLink "/"
                 , viewLink "/about"
-                , viewLink "/blog/post1"
-                , viewLink "/blog/post2"
+                , viewLink "/blog/first-commit"
+                , viewLink "/blog/ideavim-introduction"
                 , viewLink "/wrong-url"
                 , viewLink "https://google.com"
                 ]
