@@ -6,7 +6,6 @@ import Component.Layout exposing (layout)
 import Component.Markdown exposing (markdown)
 import Debug exposing (log, toString)
 import Domain.BlogPost exposing (BlogPost, PostId)
-import Http
 import Maybe exposing (Maybe, map, withDefault)
 
 
@@ -16,7 +15,7 @@ type alias Model =
 
 
 type Msg
-    = GotPlogPostMarkdown PostId (Result Http.Error String)
+    = GotPlogPostMarkdown PostId (Result String String)
 
 
 view : Model -> Browser.Document msg

@@ -6,7 +6,6 @@ import Component.Layout exposing (layout)
 import Component.Markdown exposing (markdown)
 import Const exposing (author)
 import Debug exposing (log, toString)
-import Http
 
 
 type alias Model =
@@ -14,7 +13,7 @@ type alias Model =
 
 
 type Msg
-    = GotProfile (Result Http.Error String)
+    = GotProfile (Result String String)
 
 
 init : ( Model, Cmd Msg )
